@@ -11,18 +11,7 @@ import ListTask from "@/app/components/list-task";
 
 
 export default function HomePage() {
-    // const { data: tasks = [], isLoading } = useQuery({
-    //     queryKey: ["tasks"],
-    //     queryFn: () => getAllTasks(),
-    // });
-
-    // if (!tasks) {
-    //     return <p>Error loading tasks</p>;
-    // }
-    // if (isLoading) {
-    //     return <p>Loading...</p>;
-    // }
-    const tasks: string[] = []
+    
     return (
         <div className="flex w-full flex-col gap-6">
         <TabsComponent defaultValue="list" className="">
