@@ -8,7 +8,7 @@ export interface Task {
     updatedAt: string;
 }
 
-export type Status = 
+export type Status =
     "PENDING" |
     "IN_PROGRESS" |
     "DONE"
@@ -26,3 +26,19 @@ export interface UpdateTask {
     completed?: Status;
 }
 
+
+
+export interface FeatureTask {
+    id: string | number;
+    name: string;
+    startAt: Date;
+    endAt: Date;
+    column: string;
+    status: {
+        id: string;
+        name: string;
+        color: string;
+    };
+    description?: string;
+    originalTodo: Task;
+}

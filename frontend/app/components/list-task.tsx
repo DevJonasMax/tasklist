@@ -15,129 +15,26 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/app/components/ui/accordion"
-import { Status } from "@/app/types/task";
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import getAllTasks, { updateTask } from '../(pages)/app/actions/tasks';
-import { FiLoader } from "react-icons/fi";
-import { MdMoodBad } from "react-icons/md";
+import { FeatureTask } from "@/app/types/task";
+import { dateFormatter, shortDateFormatter } from "@/app/lib/utils";
 
 
-const statusToColumn = {
-	PENDING: "Planned",
-	IN_PROGRESS: "In Progress",
-	DONE: "Done",
-} as const;
+interface listProps {
+  features: FeatureTask[];
+  columns: Columns[];
+  handleDragEnd: (event: DragEndEvent) => void;
 
-const columnToStatus = {
-	Planned: "PENDING",
-	"In Progress": "IN_PROGRESS",
-	Done: "DONE",
-} as const;
-
-const columns = [
-	{ id: "Planned", name: "Planned", color: "#6B7280" },
-	{ id: "In Progress", name: "In Progress", color: "#F59E0B" },
-	{ id: "Done", name: "Done", color: "#10B981" },
-];
-
-const dateFormatter = new Intl.DateTimeFormat("en-US", {
-	month: "short",
-	day: "numeric",
-	year: "numeric",
-});
-
-const shortDateFormatter = new Intl.DateTimeFormat("en-US", {
-	month: "short",
-	day: "numeric",
-});
-
-const ListTask = () => {
-  
-  const queryClient = useQueryClient();
- 
-	const { data: todos = [], isLoading, isError, error } = useQuery({
-		queryKey: ["todos"],
-		queryFn: getAllTasks
-	});
-
-  
-  
-	const { mutate: updateTaskStatus } = useMutation({
-		mutationFn: ({ id, completed }: { id: string; completed: Status }) =>
-		updateTask(id, { completed }),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["todos"] });
-		},
-	});
-  
-  if (isError) {
-    
-  return (
-    <div className="text-red-500 p-3 w-full h-[500px] text-center text-lg font-bold flex flex-col justify-center items-center gap-4">
-      {error.message === "Sem conexão com o servidor."
-        ? "Erro inesperado de conexão!"
-        : "Ocorreu um erro ao carregar os dados."}
-        <MdMoodBad className="text-4xl"/>
-        <button className="bg-neutral-500/20 font-bold p-1 rounded-md text-white cursor-pointer hover:bg-blue-500/80" onClick={() => window.location.reload()}>Tentar novamente</button>
-    </div>
-  );
 }
-  if (!todos) {
-      return <p>Error loading tasks</p>;
-  }
- 
-  if (isLoading) {
-      return (
-        <div className='w-full h-[500px] flex justify-center items-center'>
 
-          <p className='flex items-center'>Loading... <FiLoader className='animate-spin text-2xl text-gray-500'/></p>
-        </div>
-    );
-  }
+type Columns = {
+  id: string;
+  name: string;
+  color: string;
+};
+
+const ListTask = ({ features, columns, handleDragEnd }: listProps) => {
 
 
-  const features = todos.map((todo) => ({
-		id: todo.id,
-		name: todo.title,
-		startAt: new Date(todo.createdAt),
-		endAt: new Date(todo.updatedAt),
-		column: statusToColumn[todo.completed],
-		status: {
-			id: statusToColumn[todo.completed ],
-			name: statusToColumn[todo.completed ],
-			color:
-				columns.find((col) => col.name === statusToColumn[todo.completed ])
-					?.color || "#6B7280",
-		},
-		description: todo.description,
-		originalTodo: todo,
-	}));
-  function teste () {
-    console.log(features);
-    console.log(todos);
-  }
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over) {
-      return;
-    }
-    const columnName = over.id;
-    const newStatus = columnToStatus[columnName as keyof typeof columnToStatus];
-    if (!newStatus) {
-      return;
-    }
-    const currentStatus = features.find((feature) => feature.id === active.id);
-    
-    const originalTask = currentStatus?.originalTodo?.completed;
-
-    if (originalTask === newStatus) {
-      return;
-    }
-    console.log(currentStatus?.id, newStatus);
-    updateTaskStatus({ id: currentStatus?.id as string, completed: newStatus });
-   
-  };
   return (
     <ListProvider onDragEnd={handleDragEnd}>
       {columns.map((status) => (
@@ -145,10 +42,10 @@ const ListTask = () => {
           <ListHeader color={status.color} name={status.name} />
           <ListItems>
             {features
-              .filter((feature) => feature.status.name === status.name)
-              .map((feature, index) => (
+              .filter((feature: any) => feature.status.name === status.name)
+              .map((feature: any, index: number) => (
                 <ListItem
-                  id={feature.id}
+                  id={String(feature.id)}
                   index={index}
                   key={feature.id}
                   name={feature.name}
@@ -165,10 +62,10 @@ const ListTask = () => {
                     className="h-2 w-2 shrink-0 rounded-full"
                     style={{ backgroundColor: feature.status.color }}
                   />
-                  <div 
+                  <div
                     onPointerDown={(e) => e.stopPropagation()}
-                    onClick={(e) => e.stopPropagation()} 
-                    className='w-full border-b border-t border-gray-200/40 my-4'>
+                    onClick={(e) => e.stopPropagation()}
+                    className='w-full my-4'>
 
                     <Accordion type="single" collapsible>
                       <AccordionItem value={feature.id}>
@@ -190,15 +87,13 @@ const ListTask = () => {
                           </p>
                         </AccordionContent>
                       </AccordionItem>
-                  </Accordion>
+                    </Accordion>
                   </div>
                 </ListItem>
               ))}
           </ListItems>
         </ListGroup>
       ))}
-      <button onClick={teste} className="bg-neutral-500/20 font-bold p-1 rounded-md text-white cursor-pointer hover:bg-blue-500/80">teste</button>
-     
     </ListProvider>
   );
 };
