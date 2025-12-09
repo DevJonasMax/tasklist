@@ -1,5 +1,5 @@
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs";
+import { Tabs } from "@/app/components/ui/tabs";
 import { ReactNode } from "react";
 
 

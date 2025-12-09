@@ -3,13 +3,16 @@ import TabsComponent from "@/app/components/tabs";
 import { DragEndEvent } from '@/components/ui/shadcn-io/list';
 import { TabsContent, TabsList } from "@/app/components/ui/tabs";
 import { TabsTrigger } from "@/app/components/ui/tabs";
-import ListTask from "@/app/components/list-task";
+import ListComponent from "@/app/components/list-task";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import getAllTasks, { updateTask } from '../app/actions/tasks';
 import { FiLoader } from "react-icons/fi";
 import { MdMoodBad } from "react-icons/md";
-import { Status } from "@/app/types/task"
-
+import { FeatureTask, Status } from "@/app/types/task"
+import KanbanComponent from "@/app/components/kanbam";
+import { useState } from "react";
+import { DialogEdit } from "@/app/components/modal/editModal";
+import { TaskSchema } from "@/app/schemas/zoodSchema/featureSchema";
 
 const statusToColumn = {
     PENDING: "Planned",
@@ -31,6 +34,7 @@ const columns = [
 
 
 export default function HomePage() {
+    const [editingTask, setEditingTask] = useState<TaskSchema | null>(null);
 
     const queryClient = useQueryClient();
 
@@ -118,10 +122,10 @@ export default function HomePage() {
     return (
         <div className="flex w-full flex-col gap-6">
             <TabsComponent defaultValue="list" className="">
-                <TabsList className="flex w-full  mb-6  items-center rounded-b-lg  sticky top-17 left-0 right-0">
+                <TabsList className="flex w-full  mb-6  items-center rounded-b-lg  sticky top-17 left-0 right-0 z-10">
                     <div className="flex-1 flex  justify-start border-r-2 gap-4">
 
-                        <TabsTrigger value="list" className="flex items-centers max-w-16">List</TabsTrigger>
+                        <TabsTrigger value="list" className="flex items-centers max-w-16 ">List</TabsTrigger>
                         <TabsTrigger value="canbam" className="flex items-centers max-w-16">Canbam</TabsTrigger>
 
                     </div>
@@ -130,13 +134,19 @@ export default function HomePage() {
                     </div>
                 </TabsList>
                 <TabsContent value="list">
-                    <ListTask features={features} columns={columns} handleDragEnd={handleDragEnd} />
+                    <ListComponent features={features} columns={columns} handleDragEnd={handleDragEnd}
+                        editTask={(task) => setEditingTask(task)} />
                 </TabsContent>
                 <TabsContent value="canbam">
-                    <h1>Canbam</h1>
+                    <KanbanComponent features={features} columns={columns} handleDragEnd={handleDragEnd}
+                        editTask={(task) => setEditingTask(task)} />
                 </TabsContent>
             </TabsComponent>
-
+            <DialogEdit
+                open={!!editingTask}
+                onOpenChange={(open: boolean) => !open && setEditingTask(null)}
+                task={editingTask}
+            />
         </div>
     );
 }

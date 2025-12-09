@@ -17,13 +17,14 @@ import {
 } from "@/app/components/ui/accordion"
 import { FeatureTask } from "@/app/types/task";
 import { dateFormatter, shortDateFormatter } from "@/app/lib/utils";
-
+import { MdDelete, MdEdit } from 'react-icons/md';
+import { TaskSchema } from "@/app/schemas/zoodSchema/featureSchema";
 
 interface listProps {
   features: FeatureTask[];
   columns: Columns[];
   handleDragEnd: (event: DragEndEvent) => void;
-
+  editTask: (task: TaskSchema) => void;
 }
 
 type Columns = {
@@ -32,7 +33,7 @@ type Columns = {
   color: string;
 };
 
-const ListTask = ({ features, columns, handleDragEnd }: listProps) => {
+export default function ListComponent({ features, columns, handleDragEnd, editTask }: listProps) {
 
 
   return (
@@ -70,7 +71,7 @@ const ListTask = ({ features, columns, handleDragEnd }: listProps) => {
                     <Accordion type="single" collapsible>
                       <AccordionItem value={feature.id}>
                         <AccordionTrigger>
-                          <div className='w-full flex items-center justify-between'>
+                          <div className='w-full flex items-center justify-between  gap-3'>
 
                             <p className="m-0 flex-1 font-medium text-sm">
                               {feature.name}
@@ -79,12 +80,41 @@ const ListTask = ({ features, columns, handleDragEnd }: listProps) => {
                               {shortDateFormatter.format(feature.startAt)} -{" "}
                               {dateFormatter.format(feature.endAt)}
                             </p>
+
                           </div>
                         </AccordionTrigger>
+
                         <AccordionContent>
-                          <p className="text-sm text-gray-500">
-                            {feature.description}
-                          </p>
+                          <div className='w-full flex gap-2'>
+
+                            <p className="flex-1 text-sm text-gray-500 ">
+                              {feature.description}
+                            </p>
+                            <div className=' flex gap-2 justify-end'>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  editTask({
+                                    title: feature.name,
+                                    description: feature.description || '',
+                                    status: feature.status.name,
+                                  });
+                                }}
+                                onPointerDown={(e) => e.stopPropagation()}
+                                className="border text-black px-2 p-1 rounded-full hover:border-green-500 cursor-pointer">
+                                <MdEdit className="text-green-500 text-lg" />
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+
+                                }}
+                                onPointerDown={(e) => e.stopPropagation()}
+                                className="border text-black px-2 p-1 rounded-full hover:border-red-500 cursor-pointer">
+                                <MdDelete className="text-red-500 text-lg" />
+                              </button>
+                            </div>
+                          </div>
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
@@ -97,4 +127,4 @@ const ListTask = ({ features, columns, handleDragEnd }: listProps) => {
     </ListProvider>
   );
 };
-export default ListTask;
+

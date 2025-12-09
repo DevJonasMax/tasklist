@@ -29,7 +29,7 @@ export interface UpdateTask {
 
 
 export interface FeatureTask {
-    id: string | number;
+    id: string;
     name: string;
     startAt: Date;
     endAt: Date;
@@ -41,4 +41,5 @@ export interface FeatureTask {
     };
     description?: string;
     originalTodo: Task;
+    [key: string]: unknown;
 }
