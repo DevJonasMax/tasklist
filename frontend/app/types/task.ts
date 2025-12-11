@@ -20,7 +20,7 @@ export interface CreateTask {
 }
 
 
-export interface UpdateTask {
+export interface UpdateTaskType {
     title?: string;
     description?: string;
     completed?: Status;
@@ -39,7 +39,7 @@ export interface FeatureTask {
         name: string;
         color: string;
     };
-    description?: string;
+    description: string;
     originalTodo: Task;
     [key: string]: unknown;
 }

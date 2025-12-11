@@ -8,7 +8,6 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/app/components/ui/dialog";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
@@ -16,12 +15,17 @@ import { Textarea } from "@/app/components/ui/textarea";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FeatureTaskSchema, TaskSchema } from "@/app/schemas/zoodSchema/featureSchema";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/app/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Task, UpdateTaskType } from "@/app/types/task";
+import { updateTask } from "@/app/(pages)/app/actions/tasks";
+
+
 
 interface DialogEditProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    task: TaskSchema | null;
+    task: Task | null;
 }
 
 const columnToStatus: Record<string, "PENDING" | "IN_PROGRESS" | "DONE"> = {
@@ -42,13 +46,24 @@ export function DialogEdit({ open, onOpenChange, task }: DialogEditProps) {
         defaultValues: {
             title: task?.title,
             description: task?.description,
-            status: task?.status,
+            status: task?.completed,
         }
+    });
+    const queryClient = useQueryClient();
+
+    const { mutate: editTodo, isPending } = useMutation({
+
+        mutationFn: (data: UpdateTaskType) => updateTask(task?.id || "", data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["todos"] });
+            reset();
+            onOpenChange(false);
+        },
     });
 
     useEffect(() => {
         if (task) {
-            const mappedStatus = columnToStatus[task.status as string] || task.status;
+            const mappedStatus = columnToStatus[task.completed as string] || task.completed;
             reset({
                 title: task.title,
                 description: task.description,
@@ -58,11 +73,38 @@ export function DialogEdit({ open, onOpenChange, task }: DialogEditProps) {
     }, [task, reset]);
 
     if (!task) return null;
+    if (isPending) {
+        return (
+            <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                <p className="ml-2">Aguarde ... </p>
+            </div>
+        )
+    }
 
     const handleSubmitForm = (data: TaskSchema) => {
-        console.log("Valid data:", data);
-    };
+        const isUnchanged =
+            task.title.trim() === data.title.trim() &&
+            task.description.trim() === data.description.trim() &&
+            task.completed.trim() === data.status?.trim();
 
+        if (!data.title.trim()) {
+            return;
+        }
+
+        if (isUnchanged) {
+
+            onOpenChange(false);
+            return;
+        }
+
+        editTodo({
+            title: data.title.trim(),
+            description: data.description.trim(),
+            completed: data.status as any,
+        });
+
+    }
     const handleErrors = (errors: any) => {
         console.log("Validation errors:", errors);
     };
@@ -79,12 +121,12 @@ export function DialogEdit({ open, onOpenChange, task }: DialogEditProps) {
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid gap-3">
-                            <Label htmlFor="title">Title</Label>
+                            <Label htmlFor="title">Título</Label>
                             <Input {...register("title")} />
                             {errors.title && <span className="text-red-500 text-sm">{errors.title.message}</span>}
                         </div>
                         <div className="grid gap-3">
-                            <Label htmlFor="description">Description</Label>
+                            <Label htmlFor="description">Descrição</Label>
                             <Textarea {...register("description")} />
                             {errors.description && <span className="text-red-500 text-sm">{errors.description.message}</span>}
                         </div>
@@ -107,12 +149,17 @@ export function DialogEdit({ open, onOpenChange, task }: DialogEditProps) {
                                 )
                             }}
                         />
+                        {errors.status && <span className="text-red-500 text-sm">{errors.status.message}</span>}
                     </div>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button type="button" variant="outline">Cancelar</Button>
+                            <Button type="button" variant="outline" disabled={isPending}>
+                                {isPending ? "Cancelando..." : "Cancelar"}
+                            </Button>
                         </DialogClose>
-                        <Button type="submit">salvar</Button>
+                        <Button type="submit" disabled={isPending}>
+                            {isPending ? "Salvando..." : "Salvar"}
+                        </Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

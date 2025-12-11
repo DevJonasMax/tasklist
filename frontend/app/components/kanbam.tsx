@@ -5,14 +5,14 @@ import { DragEndEvent } from '@/components/ui/shadcn-io/list';
 import { FeatureTask } from "@/app/types/task";
 import { MdEdit } from "react-icons/md"
 import { MdDelete } from "react-icons/md"
-import { TaskSchema } from "@/app/schemas/zoodSchema/featureSchema";
-
+import { Task } from "@/app/types/task";
 
 interface KanbanProps {
   features: FeatureTask[];
   columns: Columns[];
   handleDragEnd: (event: DragEndEvent) => void;
-  editTask: (task: TaskSchema) => void;
+  editTask: (task: Task) => void;
+  deleteTask: (task: Task) => void;
 }
 
 type Columns = {
@@ -21,7 +21,7 @@ type Columns = {
   color: string;
 };
 
-export default function KanbanComponent({ features, columns, handleDragEnd, editTask }: KanbanProps) {
+export default function KanbanComponent({ features, columns, handleDragEnd, editTask, deleteTask }: KanbanProps) {
 
   return (
     <>
@@ -62,17 +62,24 @@ export default function KanbanComponent({ features, columns, handleDragEnd, edit
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
+
                           editTask({
-                            title: feature.name,
-                            description: feature.description || '',
-                            status: feature?.status?.name as TaskSchema['status'],
+                            ...feature.originalTodo,
                           })
+
                         }}
                         onPointerDown={(e) => e.stopPropagation()}
                         className="border text-black px-2 p-1 rounded-full hover:border-green-500 cursor-pointer">
                         <MdEdit className="text-green-500 text-lg" />
                       </button>
                       <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+
+                          deleteTask({
+                            ...feature.originalTodo,
+                          })
+                        }}
                         onPointerDown={(e) => e.stopPropagation()}
                         className="border text-black px-2 p-1 rounded-full hover:border-red-500 cursor-pointer">
                         <MdDelete className="text-red-500 text-lg" />

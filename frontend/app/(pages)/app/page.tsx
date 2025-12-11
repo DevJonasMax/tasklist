@@ -8,11 +8,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import getAllTasks, { updateTask } from '../app/actions/tasks';
 import { FiLoader } from "react-icons/fi";
 import { MdMoodBad } from "react-icons/md";
-import { FeatureTask, Status } from "@/app/types/task"
+import { Status } from "@/app/types/task"
 import KanbanComponent from "@/app/components/kanbam";
 import { useState } from "react";
 import { DialogEdit } from "@/app/components/modal/editModal";
 import { TaskSchema } from "@/app/schemas/zoodSchema/featureSchema";
+import DeleteModal from "@/app/components/modal/deleteModal";
+import CreateTaskModal from "@/app/components/modal/createTaskModal";
+import { Task } from "@/app/types/task";
 
 const statusToColumn = {
     PENDING: "Planned",
@@ -34,8 +37,9 @@ const columns = [
 
 
 export default function HomePage() {
-    const [editingTask, setEditingTask] = useState<TaskSchema | null>(null);
-
+    const [editingTask, setEditingTask] = useState<Task | null>(null);
+    const [deleteTask, setDeleteTask] = useState<Task | null>(null);
+    const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
     const queryClient = useQueryClient();
 
     const { data: todos = [], isLoading, isError, error } = useQuery({
@@ -130,22 +134,35 @@ export default function HomePage() {
 
                     </div>
                     <div className="flex-1 text-end ">
-                        <button className="bg-neutral-500/20 font-bold p-1 rounded-md text-white cursor-pointer hover:bg-blue-500/80">nova tarefa</button>
+                        <button
+                            onClick={() => setOpenCreateModal(true)}
+                            className="bg-neutral-500/20 font-bold p-1 rounded-md text-white cursor-pointer hover:bg-blue-500/80">
+                            nova tarefa
+                        </button>
                     </div>
                 </TabsList>
                 <TabsContent value="list">
                     <ListComponent features={features} columns={columns} handleDragEnd={handleDragEnd}
-                        editTask={(task) => setEditingTask(task)} />
+                        editTask={(task) => setEditingTask(task)} deleteTask={(task) => setDeleteTask(task)} />
                 </TabsContent>
                 <TabsContent value="canbam">
                     <KanbanComponent features={features} columns={columns} handleDragEnd={handleDragEnd}
-                        editTask={(task) => setEditingTask(task)} />
+                        editTask={(task) => setEditingTask(task)} deleteTask={(task) => setDeleteTask(task)} />
                 </TabsContent>
             </TabsComponent>
+            <CreateTaskModal
+                open={openCreateModal}
+                onOpenChange={(open: boolean) => !open && setOpenCreateModal(false)}
+            />
             <DialogEdit
                 open={!!editingTask}
                 onOpenChange={(open: boolean) => !open && setEditingTask(null)}
                 task={editingTask}
+            />
+            <DeleteModal
+                open={!!deleteTask}
+                onOpenChange={(open: boolean) => !open && setDeleteTask(null)}
+                TaskForDelete={deleteTask}
             />
         </div>
     );

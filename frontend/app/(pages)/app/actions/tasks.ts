@@ -1,5 +1,5 @@
 import { Api } from "@/app/lib/api";
-import { CreateTask, Task, UpdateTask } from "@/app/types/task";
+import { CreateTask, Task, UpdateTaskType } from "@/app/types/task";
 
 export default async function getAllTasks(): Promise<Task[]> {
     const response = await Api.get<Task[]>("/api/tasks");
@@ -11,7 +11,12 @@ export async function createTask(task: CreateTask) {
     return response.data;
 }
 // Update a task by ID
-export async function updateTask(id: string, taskUpdate: UpdateTask) {
+export async function updateTask(id: string, taskUpdate: UpdateTaskType) {
     const response = await Api.patch<Task>(`/api/tasks/update/${id}`, taskUpdate);
+    return response.data;
+}
+
+export async function deleteTask(id: string) {
+    const response = await Api.delete<Task>(`/api/tasks/delete/${id}`);
     return response.data;
 }

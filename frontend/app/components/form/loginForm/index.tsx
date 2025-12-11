@@ -32,22 +32,22 @@ export default function LoginForm() {
     });
 
     const onSubmit = async (data: LoginFormData) => {
-        console.log(data);
+
         try {
-             const req = await AuthAction({
+            const req = await AuthAction({
                 email: data.email,
                 password: data.password,
             });
             console.log(req.message);
             router.push("/app");
         } catch (err: any) {
-                if (err?.status === 404) {
-                    console.log("Usuário não encontrado!");
-                } else if (err?.status === 401) {
-                    console.log("Usuário ou senha inválidos!");
-                } else {
-                    console.log(err.message);
-                }
+            if (err?.status === 404) {
+                console.log("Usuário não encontrado!");
+            } else if (err?.status === 401) {
+                console.log("Usuário ou senha inválidos!");
+            } else {
+                console.log(err.message);
+            }
         };
     };
     return (
