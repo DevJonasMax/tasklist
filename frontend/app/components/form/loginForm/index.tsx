@@ -13,11 +13,15 @@ import {
 import Input from "@/app/components/input";
 import Button from "@/app/components/button";
 import Link from "next/link";
-
+import { LiaEyeSolid } from "react-icons/lia";
+import { LiaEyeSlashSolid } from "react-icons/lia";
 import { useRouter } from "next/navigation";
-import AuthAction from "@/app/(pages)/app/actions/auth";
+import { AuthAction } from "@/app/(pages)/app/actions/auth";
+import { useState } from "react";
 
 export default function LoginForm() {
+    const [error, setError] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
     const {
         register,
@@ -42,14 +46,15 @@ export default function LoginForm() {
             router.push("/app");
         } catch (err: any) {
             if (err?.status === 404) {
-                console.log("Usuário não encontrado!");
+                setError("Usuário não encontrado!");
             } else if (err?.status === 401) {
-                console.log("Usuário ou senha inválidos!");
+                setError("Usuário ou senha inválidos!");
             } else {
                 console.log(err.message);
             }
         };
     };
+
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <Field className="w-full md:w-96 gap-2">
@@ -75,14 +80,26 @@ export default function LoginForm() {
 
                 <FieldSeparator />
                 <FieldLabel htmlFor="password">Senha</FieldLabel>
-                <Input
-                    id="password"
-                    type="password"
-                    register={register}
-                    name="password"
-                    inputError={!!errors.password?.message}
-                    aria-invalid={errors.password ? "true" : "false"}
-                />
+                <div className="relative">
+                    <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        register={register}
+                        name="password"
+                        inputError={!!errors.password?.message}
+                        aria-invalid={errors.password ? "true" : "false"}
+
+                    />
+                    <div onClick={() => setShowPassword(!showPassword)} className="absolute top-1/2 right-2 transform -translate-y-1/2 cursor-pointer">
+                        {showPassword ? (
+                            <LiaEyeSolid className="w-5 h-5 text-gray-500" />
+
+                        ) : (
+                            <LiaEyeSlashSolid className="w-5 h-5 text-gray-500" />
+                        )}
+
+                    </div>
+                </div>
                 {errors.password ? (
                     <p className="text-red-400 text-sm">
                         *{errors.password?.message} !
@@ -110,9 +127,16 @@ export default function LoginForm() {
                     </FieldGroup>
                 )}
                 <FieldSeparator />
+                {error && (
+                    <p className="text-red-400 text-sm">
+                        *{error} !
+                    </p>
+                )}
+                <FieldSeparator />
                 <Button
+                    disabled={!watch("email") || !watch("password")}
                     type="submit"
-                    className="w-full p-2 border rounded-md bg-gray-500 text-white cursor-pointer hover:bg-gray-600"
+
                 >
                     Login
                 </Button>

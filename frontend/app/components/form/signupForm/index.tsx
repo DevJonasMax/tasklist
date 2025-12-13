@@ -12,13 +12,19 @@ import { SignUpSchema } from "@/app/schemas/zoodSchema/signupSchema";
 import Input from "../../input";
 import Button from "../../button";
 import Link from "next/link";
+import { useState } from "react";
+import { RegisterAction } from "@/app/(pages)/app/actions/auth";
+import { LiaEyeSlashSolid, LiaEyeSolid } from "react-icons/lia";
 
 export default function SignUpForm() {
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState("");
     const {
         register,
         handleSubmit,
         formState: { errors },
         setValue,
+        watch,
     } = useForm<SignUpForm>({
         resolver: zodResolver(SignUpSchema),
     });
@@ -31,7 +37,20 @@ export default function SignUpForm() {
 
     const onSubmit = async (data: SignUpForm) => {
         console.log(data);
-        resetIputs();
+        try {
+            await RegisterAction({
+                name: data.name,
+                email: data.email,
+                password: data.password,
+            });
+            resetIputs();
+        } catch (error) {
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                console.error("Erro desconhecido. Por favor, tente novamente.");
+            }
+        }
     };
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -56,7 +75,18 @@ export default function SignUpForm() {
                     </FieldDescription>
                 )}
                 <FieldLabel>Password</FieldLabel>
-                <Input register={register} name="password" type="password" />
+                <div className="relative w-full">
+                    <Input register={register} name="password" type={showPassword ? "text" : "password"} />
+                    <div onClick={() => setShowPassword(!showPassword)} className="absolute top-1/2 right-2 transform -translate-y-1/2 cursor-pointer">
+                        {showPassword ? (
+                            <LiaEyeSolid className="w-5 h-5 text-gray-500" />
+
+                        ) : (
+                            <LiaEyeSlashSolid className="w-5 h-5 text-gray-500" />
+                        )}
+
+                    </div>
+                </div>
                 {errors.password ? (
                     <p className="text-red-400 text-sm">
                         *{errors.password.message} !
@@ -68,7 +98,17 @@ export default function SignUpForm() {
                     </FieldDescription>
                 )}
                 <FieldSeparator />
-                <Button>Inscrever-se</Button>
+                {error && (
+                    <p className="text-red-400 text-sm">*{error} !</p>
+                )}
+                <FieldSeparator />
+                <Button
+                    disabled={!watch("name") || !watch("email") || !watch("password")}
+                    type="submit"
+
+                >
+                    Inscrever-se
+                </Button>
                 <Link
                     href="/login"
                     className="text-sm text-gray-500 text-center mt-2 hover:underline hover:text-gray-400"

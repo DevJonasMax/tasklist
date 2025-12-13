@@ -1,7 +1,7 @@
 import { Api } from "@/app/lib/api";
 import { LoginRequest, RegisterRequest } from "@/app/types/auth";
 
-export default async function AuthAction({
+export async function AuthAction({
     email,
     password,
 }: LoginRequest) {
@@ -18,11 +18,13 @@ export default async function AuthAction({
 }
 
 export async function RegisterAction({
+    name,
     email,
     password,
 }: RegisterRequest) {
     try {
-        const response = await Api.post("/auth/register", {
+        const response = await Api.post("/auth/signup", {
+            name,
             email,
             password,
         });
@@ -37,7 +39,7 @@ export async function LogoutAction() {
     try {
         const response = await Api.post("/auth/signout");
         return response.data;
-        
+
     } catch (error) {
         console.error("Error logging out:", error);
         throw error;
