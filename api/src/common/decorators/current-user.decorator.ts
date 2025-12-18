@@ -10,7 +10,7 @@ export interface RequestWithUser {
 
 export const CurrentUser = createParamDecorator(
   (data: unknown, ctx: ExecutionContext): RequestWithUser => {
-    const request = ctx.switchToHttp().getRequest();
+    const request = ctx.switchToHttp().getRequest<{ user?: RequestWithUser }>();
     if (!request.user) {
       throw new UnauthorizedException('User not authenticated');
     }

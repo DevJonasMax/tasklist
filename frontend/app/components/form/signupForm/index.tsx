@@ -76,15 +76,20 @@ export default function SignUpForm() {
                 )}
                 <FieldLabel>Password</FieldLabel>
                 <div className="relative w-full">
-                    <Input register={register} name="password" type={showPassword ? "text" : "password"} />
-                    <div onClick={() => setShowPassword(!showPassword)} className="absolute top-1/2 right-2 transform -translate-y-1/2 cursor-pointer">
+                    <Input
+                        register={register}
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                    />
+                    <div
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute top-1/2 right-2 transform -translate-y-1/2 cursor-pointer"
+                    >
                         {showPassword ? (
                             <LiaEyeSolid className="w-5 h-5 text-gray-500" />
-
                         ) : (
                             <LiaEyeSlashSolid className="w-5 h-5 text-gray-500" />
                         )}
-
                     </div>
                 </div>
                 {errors.password ? (
@@ -98,14 +103,13 @@ export default function SignUpForm() {
                     </FieldDescription>
                 )}
                 <FieldSeparator />
-                {error && (
-                    <p className="text-red-400 text-sm">*{error} !</p>
-                )}
+                {error && <p className="text-red-400 text-sm">*{error} !</p>}
                 <FieldSeparator />
                 <Button
-                    disabled={!watch("name") || !watch("email") || !watch("password")}
+                    disabled={
+                        !watch("name") || !watch("email") || !watch("password")
+                    }
                     type="submit"
-
                 >
                     Inscrever-se
                 </Button>
