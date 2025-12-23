@@ -15,6 +15,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { RegisterAction } from "@/app/(pages)/app/actions/auth";
 import { LiaEyeSlashSolid, LiaEyeSolid } from "react-icons/lia";
+import { useWatch } from "react-hook-form";
+import router from "next/router";
 
 export default function SignUpForm() {
     const [showPassword, setShowPassword] = useState(false);
@@ -24,9 +26,21 @@ export default function SignUpForm() {
         handleSubmit,
         formState: { errors },
         setValue,
-        watch,
+        control,
     } = useForm<SignUpForm>({
         resolver: zodResolver(SignUpSchema),
+    });
+    const name = useWatch({
+        control,
+        name: "name",
+    });
+    const email = useWatch({
+        control,
+        name: "email",
+    });
+    const password = useWatch({
+        control,
+        name: "password",
     });
 
     const resetIputs = () => {
@@ -44,11 +58,22 @@ export default function SignUpForm() {
                 password: data.password,
             });
             resetIputs();
-        } catch (error) {
+            router.push("/login");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+            if (error?.status === 409) {
+                setError("Email já esta em uso");
+                return;
+            }
             if (error instanceof Error) {
                 setError(error.message);
+                return;
             } else {
                 console.error("Erro desconhecido. Por favor, tente novamente.");
+                setError(
+                    "Erro desconhecido. Por favor confira seus dados e tente novamente."
+                );
+                return;
             }
         }
     };
@@ -105,12 +130,7 @@ export default function SignUpForm() {
                 <FieldSeparator />
                 {error && <p className="text-red-400 text-sm">*{error} !</p>}
                 <FieldSeparator />
-                <Button
-                    disabled={
-                        !watch("name") || !watch("email") || !watch("password")
-                    }
-                    type="submit"
-                >
+                <Button disabled={!name || !email || !password} type="submit">
                     Inscrever-se
                 </Button>
                 <Link

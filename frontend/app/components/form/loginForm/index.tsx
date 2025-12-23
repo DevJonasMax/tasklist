@@ -18,6 +18,7 @@ import { LiaEyeSlashSolid } from "react-icons/lia";
 import { useRouter } from "next/navigation";
 import { AuthAction } from "@/app/(pages)/app/actions/auth";
 import { useState } from "react";
+import { useWatch } from "react-hook-form";
 
 export default function LoginForm() {
     const [error, setError] = useState("");
@@ -26,7 +27,7 @@ export default function LoginForm() {
     const {
         register,
         handleSubmit,
-        watch,
+        control,
         formState: { errors },
     } = useForm<LoginFormData>({
         resolver: zodResolver(LoginFormSchema),
@@ -34,9 +35,16 @@ export default function LoginForm() {
             rememberMe: false,
         },
     });
-
+    const email = useWatch({
+        control,
+        name: "email",
+    });
+    const password = useWatch({
+        control,
+        name: "password",
+    });
     const onSubmit = async (data: LoginFormData) => {
-
+        setError("");
         try {
             const req = await AuthAction({
                 email: data.email,
@@ -44,6 +52,7 @@ export default function LoginForm() {
             });
             console.log(req.message);
             router.push("/app");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             if (err?.status === 404) {
                 setError("Usuário não encontrado!");
@@ -52,7 +61,7 @@ export default function LoginForm() {
             } else {
                 console.log(err.message);
             }
-        };
+        }
     };
 
     return (
@@ -88,16 +97,16 @@ export default function LoginForm() {
                         name="password"
                         inputError={!!errors.password?.message}
                         aria-invalid={errors.password ? "true" : "false"}
-
                     />
-                    <div onClick={() => setShowPassword(!showPassword)} className="absolute top-1/2 right-2 transform -translate-y-1/2 cursor-pointer">
+                    <div
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute top-1/2 right-2 transform -translate-y-1/2 cursor-pointer"
+                    >
                         {showPassword ? (
                             <LiaEyeSolid className="w-5 h-5 text-gray-500" />
-
                         ) : (
                             <LiaEyeSlashSolid className="w-5 h-5 text-gray-500" />
                         )}
-
                     </div>
                 </div>
                 {errors.password ? (
@@ -110,7 +119,7 @@ export default function LoginForm() {
                     </FieldDescription>
                 )}
                 <FieldSeparator />
-                {watch("email") && watch("password") && (
+                {email && password && (
                     <FieldGroup className="flex flex-row items-center justify-start gap-2">
                         <FieldLabel
                             htmlFor="remember"
@@ -127,17 +136,9 @@ export default function LoginForm() {
                     </FieldGroup>
                 )}
                 <FieldSeparator />
-                {error && (
-                    <p className="text-red-400 text-sm">
-                        *{error} !
-                    </p>
-                )}
+                {error && <p className="text-red-400 text-sm">*{error} !</p>}
                 <FieldSeparator />
-                <Button
-                    disabled={!watch("email") || !watch("password")}
-                    type="submit"
-
-                >
+                <Button disabled={!email || !password} type="submit">
                     Login
                 </Button>
                 <Link
