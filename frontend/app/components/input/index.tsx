@@ -8,6 +8,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     width?: string;
     className?: string;
     placeholder?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     register: UseFormRegister<any>;
     name: string;
     rules?: RegisterOptions;
@@ -17,7 +18,6 @@ export default function Input({
     type,
     register,
     className,
-    width,
     name,
     rules,
     inputError,

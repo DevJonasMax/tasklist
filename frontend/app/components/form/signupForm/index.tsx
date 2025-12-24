@@ -16,11 +16,12 @@ import { useState } from "react";
 import { RegisterAction } from "@/app/(pages)/app/actions/auth";
 import { LiaEyeSlashSolid, LiaEyeSolid } from "react-icons/lia";
 import { useWatch } from "react-hook-form";
-import router from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function SignUpForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
+    const router = useRouter();
     const {
         register,
         handleSubmit,
@@ -66,7 +67,7 @@ export default function SignUpForm() {
                 return;
             }
             if (error instanceof Error) {
-                setError(error.message);
+                console.error(error.message);
                 return;
             } else {
                 console.error("Erro desconhecido. Por favor, tente novamente.");
