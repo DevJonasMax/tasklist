@@ -11,7 +11,7 @@ import { Button } from "@/app/components/ui/button";
 import { Task } from "@/app/types/task";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteTask } from "@/app/(pages)/app/actions/tasks";
-
+import { toast } from "react-toastify";
 
 interface DeleteModalProps {
     open: boolean;
@@ -19,8 +19,11 @@ interface DeleteModalProps {
     TaskForDelete: Task | null;
 }
 
-export default function DeleteModal({ open, onOpenChange, TaskForDelete }: DeleteModalProps) {
-
+export default function DeleteModal({
+    open,
+    onOpenChange,
+    TaskForDelete,
+}: DeleteModalProps) {
     const queryClient = useQueryClient();
     const { mutate: deleteTaskMutate, isPending } = useMutation({
         mutationFn: deleteTask,
@@ -33,9 +36,19 @@ export default function DeleteModal({ open, onOpenChange, TaskForDelete }: Delet
         if (!task) {
             return;
         }
-        deleteTaskMutate(task.id);
-        onOpenChange(false);
-    }
+        try {
+            deleteTaskMutate(task.id);
+            onOpenChange(false);
+            toast.success("Task excluída com sucesso!", {
+                autoClose: 2000,
+                position: "bottom-center",
+                hideProgressBar: true,
+            });
+        } catch (error) {
+            console.log(error);
+            toast.error("Erro ao excluir Task!");
+        }
+    };
 
     if (isPending) {
         return (
@@ -43,9 +56,8 @@ export default function DeleteModal({ open, onOpenChange, TaskForDelete }: Delet
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
                 <p className="ml-2">Aguarde ... </p>
             </div>
-        )
+        );
     }
-
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -53,14 +65,22 @@ export default function DeleteModal({ open, onOpenChange, TaskForDelete }: Delet
                 <DialogHeader>
                     <DialogTitle>Confirmação de Exclusão</DialogTitle>
                     <DialogDescription>
-                        Tem certeza de que deseja excluir a tarefa "<strong>{TaskForDelete?.title}</strong>"? Esta ação é irreversível.
+                        Tem certeza de que deseja excluir a tarefa &ldquo;
+                        <strong>{TaskForDelete?.title}</strong>&rdquo;? Esta
+                        ação é irreversível.
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                    <Button variant="destructive" onClick={() => handleDelete(TaskForDelete)} disabled={isPending}>
+                    <Button
+                        variant="destructive"
+                        onClick={() => handleDelete(TaskForDelete)}
+                        disabled={isPending}
+                    >
                         {isPending ? "Excluindo..." : "Excluir"}
                     </Button>
-                    <Button onClick={() => onOpenChange(false)}>Cancelar</Button>
+                    <Button onClick={() => onOpenChange(false)}>
+                        Cancelar
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

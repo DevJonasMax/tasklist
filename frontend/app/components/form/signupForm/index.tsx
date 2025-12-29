@@ -12,11 +12,12 @@ import { SignUpSchema } from "@/app/schemas/zoodSchema/signupSchema";
 import Input from "../../input";
 import Button from "../../button";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RegisterAction } from "@/app/(pages)/app/actions/auth";
 import { LiaEyeSlashSolid, LiaEyeSolid } from "react-icons/lia";
 import { useWatch } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 export default function SignUpForm() {
     const [showPassword, setShowPassword] = useState(false);
@@ -43,7 +44,10 @@ export default function SignUpForm() {
         control,
         name: "password",
     });
-
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setError("");
+    }, [name, email, password]);
     const resetIputs = () => {
         setValue("name", "");
         setValue("email", "");
@@ -59,6 +63,7 @@ export default function SignUpForm() {
                 password: data.password,
             });
             resetIputs();
+            toast.success("Conta criada com sucesso!");
             router.push("/login");
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
@@ -89,7 +94,12 @@ export default function SignUpForm() {
                     </p>
                 )}
                 <FieldLabel>Email</FieldLabel>
-                <Input register={register} name="email" type="email" />
+                <Input
+                    register={register}
+                    name="email"
+                    type="email"
+                    inputError={!!errors.email?.message || !!error}
+                />
                 {errors.email ? (
                     <p className="text-red-400 text-sm">
                         *{errors.email.message} !
@@ -106,6 +116,7 @@ export default function SignUpForm() {
                         register={register}
                         name="password"
                         type={showPassword ? "text" : "password"}
+                        inputError={!!errors.password?.message || !!error}
                     />
                     <div
                         onClick={() => setShowPassword(!showPassword)}

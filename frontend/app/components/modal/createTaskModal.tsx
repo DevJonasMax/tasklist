@@ -12,27 +12,32 @@ import { Input } from "@/app/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "@/app/components/ui/button";
 import { useForm } from "react-hook-form";
-import { FeatureTaskSchema, TaskSchema } from "@/app/schemas/zoodSchema/featureSchema";
+import {
+    FeatureTaskSchema,
+    TaskSchema,
+} from "@/app/schemas/zoodSchema/featureSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createTask } from "@/app/(pages)/app/actions/tasks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
+import { toast } from "react-toastify";
 
 interface createTaskModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
 
-export default function CreateTaskModal({ open, onOpenChange, }: createTaskModalProps) {
+export default function CreateTaskModal({
+    open,
+    onOpenChange,
+}: createTaskModalProps) {
     const {
         register,
         handleSubmit,
         setValue,
-        formState: { errors } } = useForm<TaskSchema>(
-            {
-                resolver: zodResolver(FeatureTaskSchema),
-            }
-        );
+        formState: { errors },
+    } = useForm<TaskSchema>({
+        resolver: zodResolver(FeatureTaskSchema),
+    });
     const queryClient = useQueryClient();
     const { mutate: createNewTask, isPending } = useMutation({
         mutationFn: createTask,
@@ -45,14 +50,26 @@ export default function CreateTaskModal({ open, onOpenChange, }: createTaskModal
         if (!data) {
             return;
         }
-        createNewTask({
-            title: data.title,
-            description: data.description,
-            completed: data.status,
-        });
-        setValue("title", "");
-        setValue("description", "");
-        onOpenChange(false);
+        try {
+            createNewTask({
+                title:
+                    data.title.trim().charAt(0).toUpperCase() +
+                    data.title.trim().slice(1),
+                description: data.description.trim(),
+                completed: data.status,
+            });
+            toast.success("Task criada com sucesso!", {
+                autoClose: 2000,
+                position: "bottom-center",
+                hideProgressBar: true,
+            });
+            setValue("title", "");
+            setValue("description", "");
+            onOpenChange(false);
+        } catch (error) {
+            console.log(error);
+            toast.error("Erro ao criar Task!");
+        }
     };
     if (isPending) {
         return (
@@ -60,14 +77,11 @@ export default function CreateTaskModal({ open, onOpenChange, }: createTaskModal
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
                 <p className="ml-2">Aguarde ... </p>
             </div>
-        )
+        );
     }
 
     return (
-        <Dialog
-            open={open}
-            onOpenChange={onOpenChange}
-        >
+        <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
                 <form onSubmit={handleSubmit(handleSubmitForm)}>
                     <DialogHeader>
@@ -77,28 +91,33 @@ export default function CreateTaskModal({ open, onOpenChange, }: createTaskModal
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
-                        <Input
-                            {...register("title")}
-
-                            placeholder="Title"
-                        />
-                        {errors.title && <span className="text-red-500 text-sm">{errors.title.message}</span>}
+                        <Input {...register("title")} placeholder="Title" />
+                        {errors.title && (
+                            <span className="text-red-500 text-sm">
+                                {errors.title.message}
+                            </span>
+                        )}
                         <Textarea
                             {...register("description")}
                             placeholder="Description"
                         />
-                        {errors.description && <span className="text-red-500 text-sm">{errors.description.message}</span>}
+                        {errors.description && (
+                            <span className="text-red-500 text-sm">
+                                {errors.description.message}
+                            </span>
+                        )}
                     </div>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button type="button" variant="outline">Cancelar</Button>
+                            <Button type="button" variant="outline">
+                                Cancelar
+                            </Button>
                         </DialogClose>
 
                         <Button type="submit">Salvar</Button>
-
                     </DialogFooter>
                 </form>
             </DialogContent>
         </Dialog>
-    )
-};
+    );
+}

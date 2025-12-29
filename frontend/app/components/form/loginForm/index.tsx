@@ -73,7 +73,7 @@ export default function LoginForm() {
                     type="email"
                     register={register}
                     name="email"
-                    inputError={!!errors.email?.message}
+                    inputError={!!errors.email?.message || !!error}
                     aria-invalid={errors.email ? "true" : "false"}
                 />
                 {errors.email ? (
@@ -95,7 +95,7 @@ export default function LoginForm() {
                         type={showPassword ? "text" : "password"}
                         register={register}
                         name="password"
-                        inputError={!!errors.password?.message}
+                        inputError={!!errors.password?.message || !!error}
                         aria-invalid={errors.password ? "true" : "false"}
                     />
                     <div

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/app/providers/query-provider";
-
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const roboto = Roboto({
     variable: "--font-roboto",
     subsets: ["latin"],
@@ -22,9 +22,8 @@ export default function RootLayout({
     return (
         <html lang="pt-br">
             <body className={`${roboto.variable}  antialiased bg-gray-300`}>
-                
-                    <QueryProvider>{children}</QueryProvider>
-               
+                <QueryProvider>{children}</QueryProvider>
+                <ToastContainer />
             </body>
         </html>
     );
