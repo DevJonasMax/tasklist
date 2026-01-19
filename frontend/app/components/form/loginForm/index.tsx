@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { AuthAction } from "@/app/(pages)/app/actions/auth";
 import { useState } from "react";
 import { useWatch } from "react-hook-form";
+import { toast } from "react-toastify";
 
 export default function LoginForm() {
     const [error, setError] = useState("");
@@ -59,6 +60,11 @@ export default function LoginForm() {
             } else if (err?.status === 401) {
                 setError("Usuário ou senha inválidos!");
             } else {
+                toast.error("Erro inesperado! Tente novamente mais tarde.", {
+                    autoClose: 2000,
+                    position: "bottom-center",
+                    hideProgressBar: true,
+                });
                 console.log(err.message);
             }
         }
