@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
     Field,
     FieldDescription,
-    FieldGroup,
     FieldLabel,
     FieldSeparator,
 } from "@/app/components/ui/field";
@@ -17,14 +16,15 @@ import { LiaEyeSolid } from "react-icons/lia";
 import { LiaEyeSlashSolid } from "react-icons/lia";
 import { useRouter } from "next/navigation";
 import { AuthAction } from "@/app/(pages)/app/actions/auth";
-import { useState } from "react";
 import { useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
+import { useState } from "react";
 
 export default function LoginForm() {
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
+
     const {
         register,
         handleSubmit,
@@ -51,7 +51,7 @@ export default function LoginForm() {
                 email: data.email,
                 password: data.password,
             });
-            console.log(req.message);
+
             router.push("/app");
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
@@ -124,7 +124,8 @@ export default function LoginForm() {
                         Nunca compartilharemos sua senha com terceiros.
                     </FieldDescription>
                 )}
-                <FieldSeparator />
+
+                {/* <FieldSeparator />
                 {email && password && (
                     <FieldGroup className="flex flex-row items-center justify-start gap-2">
                         <FieldLabel
@@ -141,7 +142,7 @@ export default function LoginForm() {
                         />
                     </FieldGroup>
                 )}
-                <FieldSeparator />
+                <FieldSeparator /> */}
                 {error && <p className="text-red-400 text-sm">*{error} !</p>}
                 <FieldSeparator />
                 <Button disabled={!email || !password} type="submit">
@@ -149,7 +150,7 @@ export default function LoginForm() {
                 </Button>
                 <Link
                     href="/signup"
-                    className="text-sm text-gray-500 text-center mt-2 hover:underline hover:text-gray-400"
+                    className="text-sm text-gray-500 text-center mt-2 hover:underline hover:text-red-500/60"
                 >
                     Não tem uma conta? Inscreva-se.
                 </Link>

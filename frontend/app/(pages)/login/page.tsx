@@ -9,10 +9,10 @@ export default function Login() {
             <Card className=" flex flex-col items-center justify-center blur-[0.5px]">
                 <div className="w-full  mb-8 flex flex-col items-center justify-center gap-2 p-2">
                     <Image
-                        src="/logo-task-black-18x120.webp"
+                        src="/logo-black.webp"
                         alt="logo-task"
-                        width={120}
-                        height={120}
+                        width={200}
+                        height={145}
                         priority
                         style={{
                             objectFit: "cover",

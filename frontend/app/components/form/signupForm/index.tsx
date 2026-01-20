@@ -77,7 +77,7 @@ export default function SignUpForm() {
             } else {
                 console.error("Erro desconhecido. Por favor, tente novamente.");
                 setError(
-                    "Erro desconhecido. Por favor confira seus dados e tente novamente."
+                    "Erro desconhecido. Por favor confira seus dados e tente novamente.",
                 );
                 return;
             }
@@ -147,7 +147,7 @@ export default function SignUpForm() {
                 </Button>
                 <Link
                     href="/login"
-                    className="text-sm text-gray-500 text-center mt-2 hover:underline hover:text-gray-400"
+                    className="text-sm text-gray-500 text-center mt-2 hover:underline hover:text-red-500/60"
                 >
                     Já tem uma conta? Faça login.
                 </Link>
