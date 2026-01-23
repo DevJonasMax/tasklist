@@ -19,10 +19,12 @@ import { AuthAction } from "@/app/(pages)/app/actions/auth";
 import { useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useState } from "react";
+import { Spinner } from "@/app/components/ui/spinner";
 
 export default function LoginForm() {
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
     const {
@@ -46,8 +48,9 @@ export default function LoginForm() {
     });
     const onSubmit = async (data: LoginFormData) => {
         setError("");
+        setLoading(true);
         try {
-            const req = await AuthAction({
+            await AuthAction({
                 email: data.email,
                 password: data.password,
             });
@@ -55,6 +58,7 @@ export default function LoginForm() {
             router.push("/app");
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
+            setLoading(false);
             if (err?.status === 404) {
                 setError("Usuário não encontrado!");
             } else if (err?.status === 401) {
@@ -145,8 +149,12 @@ export default function LoginForm() {
                 <FieldSeparator /> */}
                 {error && <p className="text-red-400 text-sm">*{error} !</p>}
                 <FieldSeparator />
-                <Button disabled={!email || !password} type="submit">
-                    Login
+                <Button disabled={!email || !password || loading} type="submit">
+                    {loading ? (
+                        <Spinner className="mx-auto text-white" />
+                    ) : (
+                        "Login"
+                    )}
                 </Button>
                 <Link
                     href="/signup"

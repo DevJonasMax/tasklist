@@ -46,11 +46,10 @@ export default function Header() {
         <header className="w-full shadow-sm  inset-x-0 top-0 z-50 sticky bg-white">
             <Container className="h-16 flex items-center justify-between py-2 ">
                 <Image
-                    src="/logo-task-black-18x120.webp"
+                    src="/logo-black.webp"
                     alt="logo"
                     width={80}
-                    height={80}
-                    className="-rotate-2 "
+                    height={70}
                 />
 
                 <div className="flex items-center justify-center gap-4 bg-gray-200/40 px-2 py-1 rounded-full">

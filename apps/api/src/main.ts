@@ -17,7 +17,7 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: true,
+    origin: process.env.CORS_ORIGIN,
     credentials: true,
   });
   app.useGlobalFilters(new PrismaClientExceptionFilter());
@@ -30,4 +30,4 @@ async function bootstrap() {
     )
     .catch((err) => console.log('error connecting, error:', err));
 }
-bootstrap();
+void bootstrap();

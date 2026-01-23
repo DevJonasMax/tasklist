@@ -1,0 +1,17 @@
+{
+    "name": "auth-api-monorepo",
+    "private": true,
+    "scripts": {
+        "dev": "turbo run dev",
+        "build": "turbo run build",
+        "lint": "turbo run lint",
+        "start": "turbo run start"
+    },
+    "devDependencies": {
+        "turbo": "^2.0.0"
+    },
+    "packageManager": "pnpm@10.26.0",
+    "engines": {
+        "node": ">=18"
+    }
+}

@@ -19,7 +19,6 @@ export default function Login() {
                             // border: "1px solid #000",
                         }}
                     />
-                    <h1 className="text-3xl font-bold ">Login</h1>
                 </div>
                 <hr className="w-full border-t-2 border-gray-500/20 mb-6 " />
                 <div className="w-full flex flex-col items-center justify-start">
