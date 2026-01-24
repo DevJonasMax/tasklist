@@ -3,12 +3,19 @@
     "tasks": {
         "build": {
             "dependsOn": ["^build"],
+            "inputs": ["$TURBO_DEFAULT_INPUTS", ".env*"],
             "outputs": ["dist/**", ".next/**"]
         },
         "dev": {
-            "cache": false
+            "cache": false,
+            "persistent": true
         },
-        "lint": {},
+        "lint": {
+            "dependsOn": ["^build"]
+        },
+        "check-types": {
+            "dependsOn": ["^check-types"]
+        },
         "start": {}
     }
 }
