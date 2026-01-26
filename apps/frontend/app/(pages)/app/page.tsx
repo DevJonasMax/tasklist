@@ -7,12 +7,10 @@ import ListComponent from "@/app/components/list-task";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import getAllTasks, { updateTask } from "../app/actions/tasks";
 import { FiLoader } from "react-icons/fi";
-import { MdMoodBad } from "react-icons/md";
 import { Status } from "@/app/types/task";
 import KanbanComponent from "@/app/components/kanbam";
 import { useState } from "react";
 import { DialogEdit } from "@/app/components/modal/editModal";
-import { TaskSchema } from "@/app/schemas/zoodSchema/featureSchema";
 import DeleteModal from "@/app/components/modal/deleteModal";
 import CreateTaskModal from "@/app/components/modal/createTaskModal";
 import { Task } from "@/app/types/task";
@@ -41,14 +39,10 @@ export default function HomePage() {
     const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
     const queryClient = useQueryClient();
 
-    const {
-        data: todos = [],
-        isLoading,
-        isError,
-        error,
-    } = useQuery({
+    const { data: todos = [], isLoading } = useQuery({
         queryKey: ["todos"],
         queryFn: getAllTasks,
+        throwOnError: true,
     });
 
     const { mutate: updateTaskStatus } = useMutation({
@@ -59,22 +53,6 @@ export default function HomePage() {
         },
     });
 
-    if (isError) {
-        return (
-            <div className="text-red-500 p-3 w-full h-[500px] text-center text-lg font-bold flex flex-col justify-center items-center gap-4">
-                {error.message === "Sem conexão com o servidor."
-                    ? "Erro inesperado de conexão!"
-                    : "Ocorreu um erro ao carregar os dados."}
-                <MdMoodBad className="text-4xl" />
-                <button
-                    className="bg-neutral-500/20 font-bold p-1 rounded-md text-white cursor-pointer hover:bg-blue-500/80"
-                    onClick={() => window.location.reload()}
-                >
-                    Tentar novamente
-                </button>
-            </div>
-        );
-    }
     if (!todos) {
         return <p>Error loading tasks</p>;
     }
@@ -101,7 +79,7 @@ export default function HomePage() {
             name: statusToColumn[todo.completed],
             color:
                 columns.find(
-                    (col) => col.name === statusToColumn[todo.completed]
+                    (col) => col.name === statusToColumn[todo.completed],
                 )?.color || "#6B7280",
         },
         description: todo.description,
@@ -120,7 +98,7 @@ export default function HomePage() {
             return;
         }
         const currentStatus = features.find(
-            (feature) => feature.id === active.id
+            (feature) => feature.id === active.id,
         );
 
         const originalTask = currentStatus?.originalTodo?.completed;

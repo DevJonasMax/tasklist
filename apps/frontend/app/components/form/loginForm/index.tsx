@@ -22,7 +22,12 @@ import { useState } from "react";
 import { Spinner } from "@/app/components/ui/spinner";
 
 export default function LoginForm() {
+    const [crashError, setCrashError] = useState<Error | null>(null);
     const [error, setError] = useState("");
+
+    if (crashError) {
+        throw crashError;
+    }
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -69,7 +74,7 @@ export default function LoginForm() {
                     position: "bottom-center",
                     hideProgressBar: true,
                 });
-                console.log(err.message);
+                setCrashError(err);
             }
         }
     };
@@ -129,24 +134,6 @@ export default function LoginForm() {
                     </FieldDescription>
                 )}
 
-                {/* <FieldSeparator />
-                {email && password && (
-                    <FieldGroup className="flex flex-row items-center justify-start gap-2">
-                        <FieldLabel
-                            htmlFor="remember"
-                            className="text-sm text-gray-500"
-                        >
-                            Remember me
-                        </FieldLabel>
-                        <input
-                            id="remember"
-                            type="checkbox"
-                            {...register("rememberMe")}
-                            className="w-4 h-4 border border-gray-500 rounded-md cursor-pointer"
-                        />
-                    </FieldGroup>
-                )}
-                <FieldSeparator /> */}
                 {error && <p className="text-red-400 text-sm">*{error} !</p>}
                 <FieldSeparator />
                 <Button disabled={!email || !password || loading} type="submit">

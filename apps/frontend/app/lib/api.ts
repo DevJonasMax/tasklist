@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ApiError } from "next/dist/server/api-utils";
 
 export const Api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
@@ -14,11 +15,16 @@ Api.interceptors.response.use(
 
     (error) => {
         if (error.code === "ERR_NETWORK") {
-            return Promise.reject(new Error("Sem conexão com o servidor."));
+            return Promise.reject(
+                new ApiError(500, "Sem conexão com o servidor."),
+            );
         }
 
         if (error.response) {
-            const message = error.response.data?.message || error.response.data?.error || "Erro no servidor.";
+            const message =
+                error.response.data?.message ||
+                error.response.data?.error ||
+                "Erro no servidor.";
             const status = error.response.status;
             const err = new Error(message) as Error & { status?: number };
             err.status = status;
@@ -26,5 +32,5 @@ Api.interceptors.response.use(
         }
 
         return Promise.reject(new Error("Erro desconhecido."));
-    }
+    },
 );
