@@ -3,15 +3,15 @@
     "tasks": {
         "build": {
             "dependsOn": ["^build"],
-            "inputs": ["$TURBO_DEFAULT_INPUTS", ".env*"],
-            "outputs": ["dist/**", ".next/**"]
+            "inputs": ["$TURBO_DEFAULT_INPUTS"],
+            "outputs": ["dist/**", ".next/**", "node_modules/.prisma/**"]
         },
         "dev": {
             "cache": false,
             "persistent": true
         },
         "lint": {
-            "dependsOn": ["^build"]
+            "dependsOn": []
         },
         "check-types": {
             "dependsOn": ["^check-types"]
