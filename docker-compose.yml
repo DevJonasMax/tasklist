@@ -1,0 +1,57 @@
+services:
+    # Serviço do Banco de Dados
+    postgres:
+        image: postgres:15-alpine
+        container_name: tasklist-db
+        environment:
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: tasklist_db
+        ports:
+            - "5433:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        networks:
+            - tasklist-network
+
+    # Serviço da API (NestJS)
+    api:
+        build:
+            context: .
+            dockerfile: apps/api/Dockerfile
+        container_name: tasklist-api
+        ports:
+            - "3000:3000"
+        environment:
+            - DATABASE_URL=postgresql://user:password@postgres:5432/tasklist_db?schema=public
+            - JWT_SECRET=sua_chave_secreta_super_segura
+            - CORS_ORIGIN=http://localhost:3001
+        depends_on:
+            - postgres
+        networks:
+            - tasklist-network
+
+    # Serviço do Frontend (Next.js)
+    frontend:
+        build:
+            context: .
+            dockerfile: apps/frontend/Dockerfile
+        container_name: tasklist-frontend
+        ports:
+            - "3001:3000" # Acessar no navegador via http://localhost:3001
+        environment:
+            - NEXT_PUBLIC_API_URL=http://localhost:3000 # URL da API acessível pelo navegador
+        restart: always
+        depends_on:
+            - api
+        networks:
+            - tasklist-network
+
+# Volumes para persistência de dados
+volumes:
+    postgres_data:
+
+# Rede para comunicação entre os containers
+networks:
+    tasklist-network:
+        driver: bridge
