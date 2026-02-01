@@ -38,7 +38,7 @@
         "lucide-react": "^0.553.0",
         "math-intrinsics": "^1.1.0",
         "mime-db": "^1.54.0",
-        "next": "16.0.1",
+        "next": "16.1.6",
         "proxy-from-env": "^1.1.0",
         "react": "19.2.0",
         "react-dom": "19.2.0",
