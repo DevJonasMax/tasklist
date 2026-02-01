@@ -21,7 +21,9 @@ export class PrismaClientExceptionFilter implements ExceptionFilter {
         httpException = new ConflictException('Unique constraint failed');
         break;
       case 'P2003':
-        httpException = new BadRequestException('Foreign key constraint failed');
+        httpException = new BadRequestException(
+          'Foreign key constraint failed',
+        );
         break;
       case 'P2025':
         httpException = new NotFoundException('Record not found');
