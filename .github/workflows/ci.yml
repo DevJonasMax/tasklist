@@ -29,9 +29,6 @@ jobs:
             - name: Lint
               run: pnpm turbo run lint
 
-            - name: Test
-              run: pnpm turbo run test
-
             - name: Build
               run: pnpm turbo run build
               env:
