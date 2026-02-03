@@ -4,7 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { PrismaClientExceptionFilter } from './common/filters/prisma-client-exception.filter';
 import cookieParser from 'cookie-parser';
 
-async function bootstrap() {
+export async function createApp() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
   app.useGlobalPipes(
@@ -21,13 +21,6 @@ async function bootstrap() {
     credentials: true,
   });
   app.useGlobalFilters(new PrismaClientExceptionFilter());
-  await app
-    .listen(process.env.PORT ?? 3000)
-    .then(() =>
-      console.log(
-        `Application is running on port: ${process.env.PORT ?? 3000}`,
-      ),
-    )
-    .catch((err) => console.log('error connecting, error:', err));
+  await app.init();
+  return app;
 }
-void bootstrap();

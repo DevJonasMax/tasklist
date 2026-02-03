@@ -1,0 +1,14 @@
+{
+    "version": 2,
+    "functions": {
+        "apps/api/dist/serverless.js": {
+            "runtime": "nodejs20.x"
+        }
+    },
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "apps/api/dist/serverless.js"
+        }
+    ]
+}
