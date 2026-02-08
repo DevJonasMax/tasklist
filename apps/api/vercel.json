@@ -1,7 +1,6 @@
 {
   "version": 2,
   "installCommand": "cd ../.. && pnpm install",
-  "buildCommand": "prisma generate && npm run build",
   "builds": [
     {
       "src": "src/main.ts",
