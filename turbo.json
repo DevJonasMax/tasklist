@@ -4,7 +4,12 @@
         "build": {
             "dependsOn": ["^build"],
             "inputs": ["$TURBO_DEFAULT_INPUTS", ".env"],
-            "outputs": ["dist/**", ".next/**", "node_modules/.prisma/**"]
+            "outputs": ["dist/**", ".next/**", "node_modules/.prisma/**"],
+            "env": [
+                "DATABASE_URL",
+                "JWT_SECRET_KEY",
+                "CORS_ORIGIN"
+            ]
         },
         "dev": {
             "cache": false,
