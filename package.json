@@ -5,7 +5,8 @@
         "dev": "turbo run dev",
         "build": "turbo run build",
         "lint": "turbo run lint",
-        "start": "turbo run start"
+        "start": "turbo run start",
+        "postinstall": "turbo run prisma:generate --filter=api"
     },
     "devDependencies": {
         "@types/aws-lambda": "^8.10.160",
