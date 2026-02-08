@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "buildCommand": "prisma generate && npm run build",
   "builds": [
     {
       "src": "src/main.ts",
