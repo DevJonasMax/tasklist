@@ -22,5 +22,8 @@ export async function createApp() {
   });
   app.useGlobalFilters(new PrismaClientExceptionFilter());
   await app.init();
-  return app;
+  return app.getHttpAdapter().getInstance();
 }
+
+const server = createApp();
+export default server;
