@@ -1,6 +1,8 @@
 {
   "version": 2,
-  "installCommand": "cd ../.. && pnpm install",
+  "buildCommand": "pnpm install --frozen-lockfile && pnpm prisma generate && pnpm build",
+  "outputDirectory": "dist",
+  "framework": null,
   "builds": [
     {
       "src": "src/main.ts",
